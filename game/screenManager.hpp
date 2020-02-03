@@ -120,7 +120,8 @@ public:
 	SDL_Texture *loadTexture(const std::string &file) {
 		SDL_Texture *texture = IMG_LoadTexture(renderer, file.c_str());
 		if (!texture) {
-			std::cout <<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"<<"!! "<< IMG_GetError()<<" !!\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
+			std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" << "!! " << IMG_GetError()
+			          << " !!\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 			throw (std::runtime_error("ScreenManager.loadTexture() failed to load texture"));
 		}
 		return texture;

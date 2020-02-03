@@ -43,6 +43,7 @@ public:
 	}
 
 	void redraw() {
+		addObjectsToLists();
 		for (auto &obj:left) {
 			obj.redraw();
 		}
@@ -57,14 +58,14 @@ public:
 		mouseLocation.a = screenManager->getInputManager()->getMouseCoords().x;
 		mouseLocation.b = screenManager->getInputManager()->getMouseCoords().y;
 		if (screenManager->getInputManager()->getMouseState() & SDL_BUTTON_LMASK) {
-			std::cout << "\n--------------\nLMB Pressed (" << SDL_GetTicks() << ")" << std::endl;
+			//std::cout << "\n--------------\nLMB Pressed (" << SDL_GetTicks() << ")" << std::endl;
 			for (auto &i : left) {
 				if (i.getGrabbed())return;
 			}
 			for (auto &i : right) {
 				if (i.getGrabbed())return;
 			}
-			std::cout << "There is no grabbed OBJ" << std::endl;
+		//	std::cout << "There is no grabbed OBJ" << std::endl;
 			for (auto &i : left) {
 				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
 					return;
@@ -82,6 +83,26 @@ public:
 			for (auto &i : right) {
 				if (i.getGrabbed()) {i.setIsGrabbed(false); return; }
 			}
+		}
+	}
+	void addObjectsToLists(){
+		int j={0};
+		for (auto &i : left) {
+			if(i.getLocation().a>=screenManager->getWindowResolutionX()/2&&i.getLocation().a+i.getSize().a<screenManager->getWindowResolutionX()){
+				right.emplace_back(i);
+				left.erase(left.begin()+j);
+				std::cout<<"Moved "<<this<<" left-->Right"<<std::endl;
+			}
+			j++;
+		}
+		j=0;
+		for (auto &i : right) {
+			if(i.getLocation().a>=0&&i.getLocation().a+i.getSize().a<screenManager->getWindowResolutionX()/2){
+				left.emplace_back(i);
+				right.erase(left.begin()+j);
+				std::cout<<"Moved "<<this<<" Right-->Left"<<std::endl;
+			}
+			j++;
 		}
 	}
 

@@ -22,6 +22,16 @@ private:
 	twoInt location;
 	SDL_Texture *sprite;
 	twoInt size;
+public:
+	const twoInt &getLocation() const {
+		return location;
+	}
+
+	const twoInt &getSize() const {
+		return size;
+	}
+
+private:
 	std::string spriteName{};
 	int weight{0};
 	bool isGrabbed{false};
@@ -37,17 +47,17 @@ public:
 	void redraw() {
 		updateLocation();
 		screenManager->renderTexture(sprite,location.a,location.b);
-		std::cout<<this<< " is grabbed: "<<getGrabbed()<<std::endl;
+//		std::cout<<this<< " is grabbed: "<<getGrabbed()<<std::endl;
 	}
 
 	void setIsGrabbed(bool _isGrabbed) {
-		std::cout<<this<< " set is grabbed: "<<_isGrabbed<<std::endl;
+	//	std::cout<<this<< " set is grabbed: "<<_isGrabbed<<std::endl;
 		isGrabbed = _isGrabbed;
 	}
 
 	bool checkCollision(twoInt x_y) {
 		if ((x_y.a >= location.a && x_y.a <= location.a+size.a) && (x_y.b >= location.b && x_y.b <= location.b+size.b)) {
-			std::cout << "Hover over: " << this << std::endl;
+	//		std::cout << "Hover over: " << this << std::endl;
 			setIsGrabbed(true);
 			return true;
 		}
