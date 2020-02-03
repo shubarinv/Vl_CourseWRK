@@ -73,10 +73,10 @@ public:
 	}
 
 	char determinePosition(const Object *obj) {
-		int l_offset{0};
-		int r_offset{0};
-		if (left_Weight > right_Weight)l_offset = 50;
-		if (right_Weight > left_Weight)r_offset = 50;
+		int l_offset{50};
+		int r_offset{50};
+		if (left_Weight > right_Weight)l_offset = 100;
+		if (right_Weight > left_Weight)r_offset = 100;
 		if ((obj->getLocation().a >= 60 &&
 		     obj->getLocation().a + obj->getSize().a < 60 + ScreenManager::getTextureSize(weight_plate_left).a) &&
 		    obj->getLocation().b <= screenManager->getWindowResolutionY() / 2 + l_offset) {
