@@ -20,9 +20,9 @@ class Object {
 private:
 	ScreenManager *screenManager{};
 	twoInt location;
+	SDL_Texture *sprite;
 	twoInt size;
 	std::string spriteName{};
-	SDL_Rect test{};
 	int weight{0};
 	bool isGrabbed{false};
 public:
@@ -35,10 +35,8 @@ public:
 	}
 
 	void redraw() {
-		SDL_RenderDrawRect(screenManager->getRenderer(), &test);
-		SDL_SetRenderDrawColor(screenManager->getRenderer(), 255, 0,0, 255);
-		SDL_RenderFillRect(screenManager->getRenderer(), &test);
 		updateLocation();
+		screenManager->renderTexture(sprite,location.a,location.b);
 		std::cout<<this<< " is grabbed: "<<getGrabbed()<<std::endl;
 	}
 
@@ -61,9 +59,6 @@ public:
 		if (isGrabbed) {
 			location.a = screenManager->getInputManager()->getMouseCoords().x; ///< x
 			location.b = screenManager->getInputManager()->getMouseCoords().y; ///< y
-			test.x=location.a;
-			test.y=location.b;
-			std::cout<<"X: "<<test.x<<" Y:"<<test.y<<std::endl;
 		}
 	}
 
@@ -91,15 +86,11 @@ public:
 		}
 
 		spriteName = std::move(_fileName);
-
-		test.x=100;
-		test.y=200;
-		test.h=20;
-		test.w=20;
-		location.a=test.x;
-		location.b=test.y;
-		size.a=test.w;
-		size.b=test.h;
+		sprite=screenManager->loadTexture(spriteName);
+		location.a=100;
+		location.b=200;
+		size.a=ScreenManager::getTextureSize(sprite).a;
+		size.b=ScreenManager::getTextureSize(sprite).a;
 	}
 
 

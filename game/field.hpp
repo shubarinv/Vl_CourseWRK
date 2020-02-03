@@ -27,7 +27,7 @@ public:
 			throw (std::runtime_error("Field::Field() pScreenManager is NULL"));
 		}
 		screenManager = pScreenManager;
-		left.emplace_back(10, "NOPE", screenManager);
+		left.emplace_back(10, "Sprites/Weights.png", screenManager);
 	}
 
 	twoInt countSidesWeight() {
@@ -43,10 +43,10 @@ public:
 	}
 
 	void redraw() {
-		for (auto & obj:left) {
+		for (auto &obj:left) {
 			obj.redraw();
 		}
-		for (auto & obj:right) {
+		for (auto &obj:right) {
 			obj.redraw();
 		}
 
@@ -58,25 +58,33 @@ public:
 		mouseLocation.b = screenManager->getInputManager()->getMouseCoords().y;
 		if (screenManager->getInputManager()->getMouseState() & SDL_BUTTON_LMASK) {
 			std::cout << "\n--------------\nLMB Pressed (" << SDL_GetTicks() << ")" << std::endl;
-			for (auto & i : left) {
+			for (auto &i : left) {
 				if (i.getGrabbed())return;
 			}
-			for (auto & i : right) {
+			for (auto &i : right) {
 				if (i.getGrabbed())return;
 			}
 			std::cout << "There is no grabbed OBJ" << std::endl;
-			for (auto & i : left) {
+			for (auto &i : left) {
 				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
 					return;
 				}
 			}
-			for (auto & i : right) {
+			for (auto &i : right) {
 				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
 					return;
 				}
+			}
+		} else {
+			for (auto &i : left) {
+				if (i.getGrabbed()) {i.setIsGrabbed(false); return; }
+			}
+			for (auto &i : right) {
+				if (i.getGrabbed()) {i.setIsGrabbed(false); return; }
 			}
 		}
 	}
+
 
 };
 

@@ -7,6 +7,7 @@
 
 
 #include <SDL.h>
+#include <SDL_image.h>
 #include <iostream>
 #include <stdexcept>
 #include "screenManager.hpp"
@@ -35,7 +36,14 @@ public:
 			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error.c_str());
 			throw std::runtime_error("Unable to init SDL2");
 		}
-		SDL_GetCurrentDisplayMode(0, &DM);
+		if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
+		{
+			std::string error = SDL_GetError();
+			SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error.c_str());
+			throw std::runtime_error("Unable to init SDL2_Image");
+			SDL_Quit();
+		}
+		//SDL_GetCurrentDisplayMode(0, &DM);
 		auto Width = DM.w;
 		auto Height = DM.h;
 		win = SDL_CreateWindow("WeightsComp", 0, 40, 1280, 720, SDL_WINDOW_SHOWN & SDL_WINDOW_OPENGL);
