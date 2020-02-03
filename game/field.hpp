@@ -18,8 +18,7 @@ class Field {
 	};
 private:
 	ScreenManager *screenManager{};
-	std::vector<Object> left{};
-	std::vector<Object> right{};
+	std::vector<Object> objectsOnField{};
 	SDL_Texture *weight_plate_left{};
 	SDL_Texture *weight_plate_right{};
 	SDL_Texture *weight_base{};
@@ -32,20 +31,38 @@ public:
 			throw (std::runtime_error("Field::Field() pScreenManager is NULL"));
 		}
 		screenManager = pScreenManager;
-		left.emplace_back(10, "Sprites/Weights.png", screenManager);
+		objectsOnField.emplace_back(10, "Sprites/Weights.png", screenManager);
 		weight_base = screenManager->loadTexture("Sprites/Weight_base.png");
 		weight_plate_left = screenManager->loadTexture("Sprites/Weight_Plate.png");
 		weight_plate_right = screenManager->loadTexture("Sprites/Weight_Plate.png");
 	}
 
+	char determinePosition(const Object *obj) {
+		if ((obj->getLocation().a >= 0 &&
+		     obj->getLocation().a + obj->getSize().a < screenManager->getWindowResolutionX() / 2) &&
+		    obj->getLocation().b <= screenManager->getWindowResolutionY() - 100) {
+			return 'l';
+		} else if ((obj->getLocation().a >= screenManager->getWindowResolutionX() / 2 &&
+		            obj->getLocation().a + obj->getSize().a < screenManager->getWindowResolutionX()) &&
+		           obj->getLocation().b <= screenManager->getWindowResolutionY() - 100) {
+			return 'r';
+		}
+		return 'u';
+	}
+
+
 	twoInt countSidesWeight() {
 		int leftWeight{0};
 		int rightWeight{0};
-		for (const Object &obj:left) {
-			leftWeight += obj.getWeight();
-		}
-		for (const Object &obj:right) {
-			rightWeight += obj.getWeight();
+		for (const Object &obj:objectsOnField) {
+			switch (determinePosition(&obj)) {
+				case 'l':
+					leftWeight += obj.getWeight();
+					break;
+				case 'r':
+					rightWeight += obj.getWeight();
+					break;
+			}
 		}
 		return {leftWeight, rightWeight};
 	}
@@ -61,23 +78,18 @@ public:
 			screenManager->renderTexture(weight_plate_left, screenManager->getWindowResolutionX() -
 			                                                ScreenManager::getTextureSize(weight_plate_right).a - 60,
 			                             50);
-		}
-		else if(right_Weight>left_Weight){
+		} else if (right_Weight > left_Weight) {
 			screenManager->renderTexture(weight_plate_left, 60, 50);
 			screenManager->renderTexture(weight_plate_left, screenManager->getWindowResolutionX() -
 			                                                ScreenManager::getTextureSize(weight_plate_right).a - 60,
 			                             150);
-		}
-		else{
+		} else {
 			screenManager->renderTexture(weight_plate_left, 60, 100);
 			screenManager->renderTexture(weight_plate_left, screenManager->getWindowResolutionX() -
 			                                                ScreenManager::getTextureSize(weight_plate_right).a - 60,
 			                             100);
 		}
-		for (auto &obj:left) {
-			obj.redraw();
-		}
-		for (auto &obj:right) {
+		for (auto &obj:objectsOnField) {
 			obj.redraw();
 		}
 
@@ -89,31 +101,17 @@ public:
 		mouseLocation.b = screenManager->getInputManager()->getMouseCoords().y;
 		if (screenManager->getInputManager()->getMouseState() & SDL_BUTTON_LMASK) {
 			//std::cout << "\n--------------\nLMB Pressed (" << SDL_GetTicks() << ")" << std::endl;
-			for (auto &i : left) {
-				if (i.getGrabbed())return;
-			}
-			for (auto &i : right) {
+			for (auto &i : objectsOnField) {
 				if (i.getGrabbed())return;
 			}
 			//	std::cout << "There is no grabbed OBJ" << std::endl;
-			for (auto &i : left) {
-				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
-					return;
-				}
-			}
-			for (auto &i : right) {
+			for (auto &i : objectsOnField) {
 				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
 					return;
 				}
 			}
 		} else {
-			for (auto &i : left) {
-				if (i.getGrabbed()) {
-					i.setIsGrabbed(false);
-					return;
-				}
-			}
-			for (auto &i : right) {
+			for (auto &i : objectsOnField) {
 				if (i.getGrabbed()) {
 					i.setIsGrabbed(false);
 					return;
@@ -123,29 +121,18 @@ public:
 	}
 
 	void addObjectsToLists() {
-		int j = {0};
-		for (auto &i : left) {
+		for (auto &i : objectsOnField) {
 			if (i.getLocation().a >= screenManager->getWindowResolutionX() / 2 &&
 			    i.getLocation().a + i.getSize().a < screenManager->getWindowResolutionX()) {
-				right.emplace_back(i);
-				left.erase(left.begin() + j);
-				std::cout << "Moved " << this << " left-->Right" << std::endl;
+				//std::cout << "Moved " << this << " left-->Right" << std::endl;
 			}
-			j++;
-		}
-		j = 0;
-		for (auto &i : right) {
 			if (i.getLocation().a >= 0 &&
 			    i.getLocation().a + i.getSize().a < screenManager->getWindowResolutionX() / 2) {
-				left.emplace_back(i);
-				right.erase(left.begin() + j);
-				std::cout << "Moved " << this << " Right-->Left" << std::endl;
+				//std::cout << "Moved " << this << " Right-->Left" << std::endl;
 			}
-			j++;
 		}
 		left_Weight = countSidesWeight().a;
 		right_Weight = countSidesWeight().b;
-
 	}
 
 
