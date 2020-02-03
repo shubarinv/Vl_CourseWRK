@@ -64,6 +64,8 @@ public:
 		if ((x_y.a >= location.a && x_y.a <= location.a + size.a) &&
 		    (x_y.b >= location.b && x_y.b <= location.b + size.b)) {
 			//		std::cout << "Hover over: " << this << std::endl;
+
+			setOffset(location.a-x_y.a,location.b-x_y.b);
 			setIsGrabbed(true);
 			return true;
 		}
