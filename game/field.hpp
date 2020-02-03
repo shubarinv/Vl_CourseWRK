@@ -18,7 +18,7 @@ class Field {
 	};
 private:
 	ScreenManager *screenManager{};
-	std::vector<Object> objectsOnField{};
+	std::list<Object> objectsOnField{};
 	SDL_Texture *weight_plate_left{};
 	SDL_Texture *weight_plate_right{};
 	SDL_Texture *weight_base{};
@@ -32,14 +32,40 @@ public:
 		}
 		screenManager = pScreenManager;
 
-		objectsOnField.emplace_back(10, "Sprites/Weights.png", screenManager, 10, 200, 40, 40);
-		objectsOnField.emplace_back(100, "Sprites/Weights.png", screenManager, 10 + 50, 200, 45, 45);
-		objectsOnField.emplace_back(1000, "Sprites/Weights.png", screenManager, 10 + 80, 200, 50, 50);
-		objectsOnField.emplace_back(10000, "Sprites/Weights.png", screenManager, 10 + 120, 200, 55, 55);
-		objectsOnField.emplace_back(100000, "Sprites/Weights.png", screenManager, 10 + 160, 200, 60, 60);
-		objectsOnField.emplace_back(1000000, "Sprites/Weights.png", screenManager, 10 + 200, 200, 65, 65);
-		objectsOnField.emplace_back(10000000, "Sprites/Weights.png", screenManager, 10 + 240, 200, 70, 70);
-		objectsOnField.emplace_back(100000000, "Sprites/Weights.png", screenManager, 10 + 300, 200, 75, 70);
+		objectsOnField.emplace_back(10, "Sprites/Weights.png", screenManager, 5,
+		                            screenManager->getWindowResolutionY() - 45, 40, 40,
+		                            false, false);
+		objectsOnField.emplace_back(100, "Sprites/Weights.png", screenManager, 5 + 40,
+		                            screenManager->getWindowResolutionY() - 50, 45, 45,
+		                            false, false);
+		objectsOnField.emplace_back(1000, "Sprites/Weights.png", screenManager, 5 + 85,
+		                            screenManager->getWindowResolutionY() - 55, 50, 50,
+		                            false, false);
+		objectsOnField.emplace_back(10000, "Sprites/Weights.png", screenManager, 5 + 135,
+		                            screenManager->getWindowResolutionY() - 60, 55, 55,
+		                            false, false);
+		objectsOnField.emplace_back(100000, "Sprites/Weights.png", screenManager, 5 + 190,
+		                            screenManager->getWindowResolutionY() - 65, 60, 60,
+		                            false, false);
+		objectsOnField.emplace_back(1000000, "Sprites/Weights.png", screenManager, 5 + 250,
+		                            screenManager->getWindowResolutionY() - 70, 65, 65,
+		                            false, false);
+		objectsOnField.emplace_back(10000000, "Sprites/Weights.png", screenManager, 5 + 315,
+		                            screenManager->getWindowResolutionY() - 75, 70, 70,
+		                            false, false);
+		objectsOnField.emplace_back(100000000, "Sprites/Weights.png", screenManager, 5 + 385,
+		                            screenManager->getWindowResolutionY() - 80, 75, 75,
+		                            false, false);
+		objectsOnField.emplace_back(3500, "Sprites/cat.png", screenManager,
+		                            screenManager->getWindowResolutionX()/2+170,screenManager->getWindowResolutionY()-75,70,70,false,
+		                            false);
+
+		objectsOnField.emplace_back(200, "Sprites/rat.png", screenManager,
+		                            screenManager->getWindowResolutionX()/2+275,screenManager->getWindowResolutionY()-75,70,70,false, false);
+		objectsOnField.emplace_back(2000000, "Sprites/car.png", screenManager,
+		                            screenManager->getWindowResolutionX()/2+380,screenManager->getWindowResolutionY()-55,150,50,false, false);
+		objectsOnField.emplace_back(200000000, "Sprites/F9.png", screenManager,
+		                            screenManager->getWindowResolutionX()-35,screenManager->getWindowResolutionY()-245,30,240,true, false);
 
 		weight_base = screenManager->loadTexture("Sprites/Weight_base.png");
 		weight_plate_left = screenManager->loadTexture("Sprites/Weight_Plate.png");
@@ -113,6 +139,7 @@ public:
 		twoInt mouseLocation;
 		mouseLocation.a = screenManager->getInputManager()->getMouseCoords().x;
 		mouseLocation.b = screenManager->getInputManager()->getMouseCoords().y;
+		objectsOnField.remove_if(Object::removalCheck);
 		if (screenManager->getInputManager()->getMouseState() & SDL_BUTTON_LMASK) {
 			//std::cout << "\n--------------\nLMB Pressed (" << SDL_GetTicks() << ")" << std::endl;
 			for (auto &i : objectsOnField) {
@@ -120,7 +147,7 @@ public:
 			}
 			//	std::cout << "There is no grabbed OBJ" << std::endl;
 			for (auto &i : objectsOnField) {
-				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
+				if (i.checkCollision({mouseLocation.a, mouseLocation.b}, &objectsOnField)) {
 					return;
 				}
 			}

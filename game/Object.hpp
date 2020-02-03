@@ -62,12 +62,16 @@ public:
 		offset.b = y;
 	}
 
-	bool checkCollision(twoInt x_y) {
-		if (!isGrabAble)return false;
+	bool checkCollision(twoInt x_y, std::list<Object> *objects) {
 		if ((x_y.a >= location.a && x_y.a <= location.a + size.a) &&
 		    (x_y.b >= location.b && x_y.b <= location.b + size.b)) {
 			//		std::cout << "Hover over: " << this << std::endl;
-
+			if(!isGrabAble){
+				objects->emplace_back(weight,spriteName,screenManager,location.a,location.b,size.a,size.b,true,true);
+				objects->back().setOffset(location.a - x_y.a, location.b - x_y.b);
+				objects->back().setIsGrabbed(true);
+				return true;
+			}
 			setOffset(location.a - x_y.a, location.b - x_y.b);
 			setIsGrabbed(true);
 			return true;
@@ -83,6 +87,10 @@ public:
 		}
 	}
 
+
+	static bool removalCheck(const Object &obj) {
+		return (obj.isGrabAble&&(obj.getLocation().b<0));
+	}
 	void setWeight(int _weight) {
 		if (_weight >= 0)
 			weight = _weight;
@@ -134,13 +142,13 @@ public:
 	void printWeightLabel() {
 		if (weight >= 1000000) {
 			screenManager->printText(std::to_string(weight / 1000000) + " T", location.a + size.a / 2,
-			                         location.b + size.b / 2, {255, 255, 255}, 15, true);;
+			                         location.b + size.b / 2, {255, 0, 0}, 15, true);;
 		} else if (weight >= 1000 && weight < 1000000) {
 			screenManager->printText(std::to_string((int) (weight / 1000)) + " KG", location.a + size.a / 2,
-			                         location.b + size.b / 2, {255, 255, 255}, 15, true);
+			                         location.b + size.b / 2, {255, 0, 0}, 15, true);
 		} else if (weight < 1000) {
 			screenManager->printText(std::to_string(weight) + " G", location.a + size.a / 2, location.b + size.b / 2,
-			                         {255, 255, 255}, 15,
+			                         {255, 0, 0}, 15,
 			                         true);
 		}
 	}
