@@ -14,14 +14,15 @@
 #include "game.hpp"
 
 class Object {
-	struct twoInt{
-		int a{0},b{0};
+	struct twoInt {
+		int a{0}, b{0};
 	};
 private:
 	ScreenManager *screenManager{};
 	twoInt location;
 	SDL_Texture *sprite;
 	twoInt size;
+	twoInt offset;
 public:
 	const twoInt &getLocation() const {
 		return location;
@@ -46,29 +47,34 @@ public:
 
 	void redraw() {
 		updateLocation();
-		screenManager->renderTexture(sprite,location.a,location.b);
+		screenManager->renderTexture(sprite, location.a, location.b);
+		printWeightLabel();
 //		std::cout<<this<< " is grabbed: "<<getGrabbed()<<std::endl;
 	}
 
 	void setIsGrabbed(bool _isGrabbed) {
-	//	std::cout<<this<< " set is grabbed: "<<_isGrabbed<<std::endl;
 		isGrabbed = _isGrabbed;
+	}
+	void setOffset(int x,int y){
+		offset.a=x;
+		offset.b=y;
 	}
 
 	bool checkCollision(twoInt x_y) {
-		if ((x_y.a >= location.a && x_y.a <= location.a+size.a) && (x_y.b >= location.b && x_y.b <= location.b+size.b)) {
-	//		std::cout << "Hover over: " << this << std::endl;
+		if ((x_y.a >= location.a && x_y.a <= location.a + size.a) &&
+		    (x_y.b >= location.b && x_y.b <= location.b + size.b)) {
+			//		std::cout << "Hover over: " << this << std::endl;
 			setIsGrabbed(true);
 			return true;
 		}
-		isGrabbed= false;
+		isGrabbed = false;
 		return false;
 	}
 
 	void updateLocation() {
 		if (isGrabbed) {
-			location.a = screenManager->getInputManager()->getMouseCoords().x; ///< x
-			location.b = screenManager->getInputManager()->getMouseCoords().y; ///< y
+			location.a = screenManager->getInputManager()->getMouseCoords().x+offset.a; ///< x
+			location.b = screenManager->getInputManager()->getMouseCoords().y+offset.b; ///< y
 		}
 	}
 
@@ -96,11 +102,22 @@ public:
 		}
 
 		spriteName = std::move(_fileName);
-		sprite=screenManager->loadTexture(spriteName);
-		location.a=100;
-		location.b=200;
-		size.a=ScreenManager::getTextureSize(sprite).a;
-		size.b=ScreenManager::getTextureSize(sprite).a;
+		sprite = screenManager->loadTexture(spriteName);
+		location.a = 100;
+		location.b = 200;
+		size.a = ScreenManager::getTextureSize(sprite).a;
+		size.b = ScreenManager::getTextureSize(sprite).a;
+	}
+
+	void printWeightLabel() {
+		if (weight < 1000)
+			screenManager->printText(std::to_string(weight) + " Г", location.a + size.a / 2, location.b + size.b / 2,
+			                         {255, 255, 255}, 20,
+			                         true);
+		if (weight < 1000000)
+			screenManager->printText(std::to_string(weight / 1000) + " КГ", 1, 1, {255, 255, 255}, 20, true);
+		if (weight > 1000000000)
+			screenManager->printText(std::to_string(weight / 1000000) + " Т", 1, 1, {255, 255, 255}, 20, true);
 	}
 
 
