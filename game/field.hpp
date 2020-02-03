@@ -20,6 +20,11 @@ private:
 	ScreenManager *screenManager{};
 	std::vector<Object> left{};
 	std::vector<Object> right{};
+	SDL_Texture *weight_plate_left{};
+	SDL_Texture *weight_plate_right{};
+	SDL_Texture *weight_base{};
+	int left_Weight{0};
+	int right_Weight{0};
 public:
 	explicit Field(ScreenManager *pScreenManager = nullptr) {
 		if (pScreenManager == nullptr) {
@@ -28,6 +33,9 @@ public:
 		}
 		screenManager = pScreenManager;
 		left.emplace_back(10, "Sprites/Weights.png", screenManager);
+		weight_base = screenManager->loadTexture("Sprites/Weight_base.png");
+		weight_plate_left = screenManager->loadTexture("Sprites/Weight_Plate.png");
+		weight_plate_right = screenManager->loadTexture("Sprites/Weight_Plate.png");
 	}
 
 	twoInt countSidesWeight() {
@@ -44,6 +52,28 @@ public:
 
 	void redraw() {
 		addObjectsToLists();
+		screenManager->renderTexture(weight_base, screenManager->getWindowResolutionX() / 2 -
+		                                          ScreenManager::getTextureSize(weight_base).a / 2,
+		                             screenManager->getWindowResolutionY() -
+		                             ScreenManager::getTextureSize(weight_base).b);
+		if (left_Weight > right_Weight) {
+			screenManager->renderTexture(weight_plate_left, 60, 150);
+			screenManager->renderTexture(weight_plate_left, screenManager->getWindowResolutionX() -
+			                                                ScreenManager::getTextureSize(weight_plate_right).a - 60,
+			                             50);
+		}
+		else if(right_Weight>left_Weight){
+			screenManager->renderTexture(weight_plate_left, 60, 50);
+			screenManager->renderTexture(weight_plate_left, screenManager->getWindowResolutionX() -
+			                                                ScreenManager::getTextureSize(weight_plate_right).a - 60,
+			                             150);
+		}
+		else{
+			screenManager->renderTexture(weight_plate_left, 60, 100);
+			screenManager->renderTexture(weight_plate_left, screenManager->getWindowResolutionX() -
+			                                                ScreenManager::getTextureSize(weight_plate_right).a - 60,
+			                             100);
+		}
 		for (auto &obj:left) {
 			obj.redraw();
 		}
@@ -65,7 +95,7 @@ public:
 			for (auto &i : right) {
 				if (i.getGrabbed())return;
 			}
-		//	std::cout << "There is no grabbed OBJ" << std::endl;
+			//	std::cout << "There is no grabbed OBJ" << std::endl;
 			for (auto &i : left) {
 				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
 					return;
@@ -78,32 +108,44 @@ public:
 			}
 		} else {
 			for (auto &i : left) {
-				if (i.getGrabbed()) {i.setIsGrabbed(false); return; }
+				if (i.getGrabbed()) {
+					i.setIsGrabbed(false);
+					return;
+				}
 			}
 			for (auto &i : right) {
-				if (i.getGrabbed()) {i.setIsGrabbed(false); return; }
+				if (i.getGrabbed()) {
+					i.setIsGrabbed(false);
+					return;
+				}
 			}
 		}
 	}
-	void addObjectsToLists(){
-		int j={0};
+
+	void addObjectsToLists() {
+		int j = {0};
 		for (auto &i : left) {
-			if(i.getLocation().a>=screenManager->getWindowResolutionX()/2&&i.getLocation().a+i.getSize().a<screenManager->getWindowResolutionX()){
+			if (i.getLocation().a >= screenManager->getWindowResolutionX() / 2 &&
+			    i.getLocation().a + i.getSize().a < screenManager->getWindowResolutionX()) {
 				right.emplace_back(i);
-				left.erase(left.begin()+j);
-				std::cout<<"Moved "<<this<<" left-->Right"<<std::endl;
+				left.erase(left.begin() + j);
+				std::cout << "Moved " << this << " left-->Right" << std::endl;
 			}
 			j++;
 		}
-		j=0;
+		j = 0;
 		for (auto &i : right) {
-			if(i.getLocation().a>=0&&i.getLocation().a+i.getSize().a<screenManager->getWindowResolutionX()/2){
+			if (i.getLocation().a >= 0 &&
+			    i.getLocation().a + i.getSize().a < screenManager->getWindowResolutionX() / 2) {
 				left.emplace_back(i);
-				right.erase(left.begin()+j);
-				std::cout<<"Moved "<<this<<" Right-->Left"<<std::endl;
+				right.erase(left.begin() + j);
+				std::cout << "Moved " << this << " Right-->Left" << std::endl;
 			}
 			j++;
 		}
+		left_Weight = countSidesWeight().a;
+		right_Weight = countSidesWeight().b;
+
 	}
 
 

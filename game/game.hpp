@@ -94,7 +94,7 @@ private:
 		bool showDialog = true;
 		UI_MainMenu uiMainMenu(uiManager, win);
 		while (!inputManager->quitEventCheck() && state != 'q') {
-			SDL_SetRenderDrawColor(ren, 86, 86, 86, 255);
+			SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
 			if (SDL_RenderClear(ren) < 0) {
 				SDL_DestroyWindow(win);
 				std::string error = SDL_GetError();
