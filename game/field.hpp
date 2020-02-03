@@ -7,6 +7,7 @@
 
 
 #include <list>
+#include <vector>
 #include "screenManager.hpp"
 #include "Object.hpp"
 #include "game.hpp"
@@ -17,8 +18,8 @@ class Field {
 	};
 private:
 	ScreenManager *screenManager{};
-	std::list<Object> left{};
-	std::list<Object> right{};
+	std::vector<Object> left{};
+	std::vector<Object> right{};
 public:
 	explicit Field(ScreenManager *pScreenManager = nullptr) {
 		if (pScreenManager == nullptr) {
@@ -56,23 +57,22 @@ public:
 		mouseLocation.b = screenManager->getInputManager()->getMouseCoords().y;
 		if (screenManager->getInputManager()->getMouseState() & SDL_BUTTON_LMASK) {
 			std::cout << "\n--------------\nLMB Pressed (" << SDL_GetTicks() << ")" << std::endl;
-			for (const Object& obj:left) {
-				if (obj.getGrabbed())return;
+			for (auto & i : left) {
+				if (i.getGrabbed())return;
 			}
-			for (const Object& obj:right) {
-				if (obj.getGrabbed())return;
+			for (auto & i : right) {
+				if (i.getGrabbed())return;
 			}
 			std::cout << "There is no grabbed OBJ" << std::endl;
-			for (Object obj:left) {
-				if (obj.checkCollision({mouseLocation.a, mouseLocation.b})) {
+			for (auto & i : left) {
+				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
 					return;
 				}
 			}
-			for (Object obj:right) {
-				if (obj.checkCollision({mouseLocation.a, mouseLocation.b})) {
+			for (auto & i : right) {
+				if (i.checkCollision({mouseLocation.a, mouseLocation.b})) {
 					return;
 				}
-
 			}
 		}
 	}
