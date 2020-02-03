@@ -43,12 +43,13 @@ public:
 	}
 
 	void redraw() {
-		for (Object obj:left) {
+		for (auto & obj:left) {
 			obj.redraw();
 		}
-		for (Object obj:right) {
+		for (auto & obj:right) {
 			obj.redraw();
 		}
+
 	}
 
 	void checkForGrab() {

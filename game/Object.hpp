@@ -38,6 +38,7 @@ public:
 		SDL_RenderDrawRect(screenManager->getRenderer(), &test);
 		SDL_SetRenderDrawColor(screenManager->getRenderer(), 255, 0,0, 255);
 		SDL_RenderFillRect(screenManager->getRenderer(), &test);
+		updateLocation();
 		std::cout<<this<< " is grabbed: "<<getGrabbed()<<std::endl;
 	}
 
@@ -58,8 +59,11 @@ public:
 
 	void updateLocation() {
 		if (isGrabbed) {
-			location.a = screenManager->getInputManager()->getMouseCoords().x; ///< width
-			location.b = screenManager->getInputManager()->getMouseCoords().y; ///< height
+			location.a = screenManager->getInputManager()->getMouseCoords().x; ///< x
+			location.b = screenManager->getInputManager()->getMouseCoords().y; ///< y
+			test.x=location.a;
+			test.y=location.b;
+			std::cout<<"X: "<<test.x<<" Y:"<<test.y<<std::endl;
 		}
 	}
 

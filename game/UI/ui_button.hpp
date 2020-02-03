@@ -65,7 +65,7 @@ public:
     }
 
     void draw(int x, int y) {
-        SDL_RenderDrawRect(uiManager->getRenderer(), &body);
+        //SDL_RenderDrawRect(uiManager->getRenderer(), &body);
         hover = collisionCheck(x, y);
         if (enabled) {
             if (hover) {

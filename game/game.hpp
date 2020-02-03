@@ -46,7 +46,7 @@ public:
 			throw std::runtime_error("Unable to create window (SDL2)");
 		}
 
-		ren = SDL_CreateRenderer(win, -1, 0);
+		ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 		if (ren == nullptr) {
 			SDL_DestroyWindow(win);
 			std::string error = SDL_GetError();
