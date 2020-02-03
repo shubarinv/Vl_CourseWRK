@@ -31,20 +31,34 @@ public:
 			throw (std::runtime_error("Field::Field() pScreenManager is NULL"));
 		}
 		screenManager = pScreenManager;
-		objectsOnField.emplace_back(10, "Sprites/Weights.png", screenManager);
+
+		objectsOnField.emplace_back(10, "Sprites/Weights.png", screenManager, 10, 200, 40, 40);
+		objectsOnField.emplace_back(100, "Sprites/Weights.png", screenManager, 10 + 50, 200, 45, 45);
+		objectsOnField.emplace_back(1000, "Sprites/Weights.png", screenManager, 10 + 80, 200, 50, 50);
+		objectsOnField.emplace_back(10000, "Sprites/Weights.png", screenManager, 10 + 120, 200, 55, 55);
+		objectsOnField.emplace_back(100000, "Sprites/Weights.png", screenManager, 10 + 160, 200, 60, 60);
+		objectsOnField.emplace_back(1000000, "Sprites/Weights.png", screenManager, 10 + 200, 200, 65, 65);
+		objectsOnField.emplace_back(10000000, "Sprites/Weights.png", screenManager, 10 + 240, 200, 70, 70);
+		objectsOnField.emplace_back(100000000, "Sprites/Weights.png", screenManager, 10 + 300, 200, 75, 70);
+
 		weight_base = screenManager->loadTexture("Sprites/Weight_base.png");
 		weight_plate_left = screenManager->loadTexture("Sprites/Weight_Plate.png");
 		weight_plate_right = screenManager->loadTexture("Sprites/Weight_Plate.png");
 	}
 
 	char determinePosition(const Object *obj) {
-		if ((obj->getLocation().a >= 0 &&
-		     obj->getLocation().a + obj->getSize().a < screenManager->getWindowResolutionX() / 2) &&
-		    obj->getLocation().b <= screenManager->getWindowResolutionY() - 100) {
+		int l_offset{0};
+		int r_offset{0};
+		if (left_Weight > right_Weight)l_offset = 50;
+		if (right_Weight > left_Weight)r_offset = 50;
+		if ((obj->getLocation().a >= 60 &&
+		     obj->getLocation().a + obj->getSize().a < 60 + ScreenManager::getTextureSize(weight_plate_left).a) &&
+		    obj->getLocation().b <= screenManager->getWindowResolutionY() / 2 + l_offset) {
 			return 'l';
-		} else if ((obj->getLocation().a >= screenManager->getWindowResolutionX() / 2 &&
-		            obj->getLocation().a + obj->getSize().a < screenManager->getWindowResolutionX()) &&
-		           obj->getLocation().b <= screenManager->getWindowResolutionY() - 100) {
+		} else if ((obj->getLocation().a >= screenManager->getWindowResolutionX() -
+		                                    ScreenManager::getTextureSize(weight_plate_right).a - 60 &&
+		            obj->getLocation().a + obj->getSize().a < screenManager->getWindowResolutionX() - 60) &&
+		           obj->getLocation().b <= screenManager->getWindowResolutionY() / 2 + r_offset) {
 			return 'r';
 		}
 		return 'u';
@@ -120,17 +134,7 @@ public:
 		}
 	}
 
-	void addObjectsToLists() {
-		for (auto &i : objectsOnField) {
-			if (i.getLocation().a >= screenManager->getWindowResolutionX() / 2 &&
-			    i.getLocation().a + i.getSize().a < screenManager->getWindowResolutionX()) {
-				//std::cout << "Moved " << this << " left-->Right" << std::endl;
-			}
-			if (i.getLocation().a >= 0 &&
-			    i.getLocation().a + i.getSize().a < screenManager->getWindowResolutionX() / 2) {
-				//std::cout << "Moved " << this << " Right-->Left" << std::endl;
-			}
-		}
+	[[deprecated]]void addObjectsToLists() {
 		left_Weight = countSidesWeight().a;
 		right_Weight = countSidesWeight().b;
 	}
