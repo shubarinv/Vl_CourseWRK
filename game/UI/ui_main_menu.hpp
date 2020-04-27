@@ -14,6 +14,7 @@
 class UI_MainMenu : private virtual UI_Base {
 public:
     void show() {
+        uiManager->printText("Unnamed",uiManager->getWindowResolutionX() / 2,50,{90,90,90},35,true);
         play_btn->draw(uiManager->getInputManager()->getMouseCoords().x,
                        uiManager->getInputManager()->getMouseCoords().y);
         quit_btn->draw(uiManager->getInputManager()->getMouseCoords().x,
@@ -32,10 +33,14 @@ public:
 
     UI_MainMenu(ScreenManager *ui_Manager, SDL_Window *window) : UI_Base(ui_Manager, window) {
 
-            play_btn = new uiButton("Start", uiManager, uiManager->getWindowResolutionX() / 2 - 100,
-                                    150, 200, 50, 20);
-            quit_btn = new uiButton("Quit", uiManager, uiManager->getWindowResolutionX() / 2 - 100, 250,
-                                    200, 50, 20);
+        play_btn = new uiButton("Start", uiManager, uiManager->getWindowResolutionX() / 2 - 115,
+                                150, 230, 70, 20);
+        quit_btn = new uiButton("Quit", uiManager, uiManager->getWindowResolutionX() / 2 - 115, 250,
+                                230, 70, 20);
+        play_btn->setDefaultColor({174, 54, 255});
+        play_btn->setHoverColor({110, 29, 191});
+        quit_btn->setDefaultColor({95, 128, 199});
+        quit_btn->setHoverColor({57, 84, 143});
 
 
     }

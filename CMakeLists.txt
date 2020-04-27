@@ -18,7 +18,7 @@ if (NOT SDL2_FOUND)
     message(FATAL_ERROR "SDL not found!")
 endif (NOT SDL2_FOUND)
 
-
+set(CMAKE_EXE_LINKER_FLAGS "-static")
 link_libraries(
         ${SDL2_LIBRARY}
         ${SDL2TTF_LIBRARY}
@@ -27,7 +27,7 @@ link_libraries(
 )
 set(CMAKE_CXX_STANDARD 17)
 #add_executable(VL_CourseWork ex1main.cpp)
-add_executable(VL_CourseWork driver.cpp game/UI/ui_base.hpp game/screenManager.hpp game/UI/ui_main_menu.hpp game/UI/ui_button.hpp game/input_manager.hpp game/field.hpp game/Object.hpp game/weight.hpp game/UI/ui_add_object.hpp)
+add_executable(VL_CourseWork driver.cpp game/UI/ui_base.hpp game/screenManager.hpp game/UI/ui_main_menu.hpp game/UI/ui_button.hpp game/input_manager.hpp game/field.hpp game/Object.hpp game/weight.hpp )
 include_directories(${SDL2_INCLUDE_DIR}
         ${SDL2_IMAGE_INCLUDE_DIR}
         #  ${SDL2_MIXER_INCLUDE_DIR}
